@@ -1,0 +1,316 @@
+<?xml version="1.0"?>
+<interface>
+  <requires lib="gtk+" version="2.16"/>
+  <!-- interface-naming-policy toplevel-contextual -->
+  <object class="GtkAdjustment" id="adj_yref">
+    <property name="lower">-500</property>
+    <property name="upper">500</property>
+    <property name="step_increment">5</property>
+    <property name="page_increment">20</property>
+    <signal name="value_changed" handler="adj_yref_cb"/>
+  </object>
+  <object class="GtkListStore" id="liststore_marker">
+    <columns>
+      <!-- column-name x -->
+      <column type="gfloat"/>
+      <!-- column-name amp -->
+      <column type="gfloat"/>
+      <!-- column-name visable -->
+      <column type="gboolean"/>
+      <!-- column-name active -->
+      <column type="gboolean"/>
+      <!-- column-name freq -->
+      <column type="gfloat"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">199</col>
+        <col id="1">-20</col>
+        <col id="2">True</col>
+        <col id="3">True</col>
+        <col id="4">0</col>
+      </row>
+      <row>
+        <col id="0">299</col>
+        <col id="1">-5</col>
+        <col id="2">True</col>
+        <col id="3">False</col>
+        <col id="4">0</col>
+      </row>
+      <row>
+        <col id="0">0</col>
+        <col id="1">0</col>
+        <col id="2">False</col>
+        <col id="3">False</col>
+        <col id="4">0</col>
+      </row>
+      <row>
+        <col id="0">0</col>
+        <col id="1">0</col>
+        <col id="2">False</col>
+        <col id="3">False</col>
+        <col id="4">0</col>
+      </row>
+      <row>
+        <col id="0">0</col>
+        <col id="1">0</col>
+        <col id="2">False</col>
+        <col id="3">False</col>
+        <col id="4">0</col>
+      </row>
+      <row>
+        <col id="0">0</col>
+        <col id="1">0</col>
+        <col id="2">False</col>
+        <col id="3">False</col>
+        <col id="4">0</col>
+      </row>
+      <row>
+        <col id="0">0</col>
+        <col id="1">0</col>
+        <col id="2">False</col>
+        <col id="3">False</col>
+        <col id="4">0</col>
+      </row>
+      <row>
+        <col id="0">0</col>
+        <col id="1">0</col>
+        <col id="2">False</col>
+        <col id="3">False</col>
+        <col id="4">0</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkWindow" id="window1">
+    <property name="visible">True</property>
+    <signal name="delete_event" handler="gtk_main_quit"/>
+    <child>
+      <object class="GtkFixed" id="fixed1">
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkDrawingArea" id="drawing_area">
+            <property name="width_request">600</property>
+            <property name="height_request">520</property>
+            <property name="visible">True</property>
+            <property name="app_paintable">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="events">GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK</property>
+            <signal name="button_press_event" handler="canvas_button_press_cb"/>
+          </object>
+          <packing>
+            <property name="y">38</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="btn_autorun">
+            <property name="label" translatable="yes">&#x542F;&#x52A8;/&#x505C;&#x6B62;</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="btn_autorun_cb"/>
+          </object>
+          <packing>
+            <property name="x">776</property>
+            <property name="y">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="btn_y_zoom_in">
+            <property name="label" translatable="yes">+</property>
+            <property name="height_request">43</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="btn_y_zoom_in_cb"/>
+          </object>
+          <packing>
+            <property name="x">604</property>
+            <property name="y">83</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="btn_y_zoom_out">
+            <property name="label" translatable="yes">-</property>
+            <property name="height_request">38</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="btn_y_zoom_out_cb"/>
+          </object>
+          <packing>
+            <property name="x">604</property>
+            <property name="y">169</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="btn_maxhold">
+            <property name="label" translatable="yes">&#x6700;&#x5927;&#x4FDD;&#x6301;</property>
+            <property name="width_request">64</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="btn_maxhold_cb"/>
+          </object>
+          <packing>
+            <property name="x">777</property>
+            <property name="y">33</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="spinbtn_yref">
+            <property name="width_request">57</property>
+            <property name="height_request">29</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="max_length">3</property>
+            <property name="invisible_char">&#x25CF;</property>
+            <property name="adjustment">adj_yref</property>
+            <property name="wrap">True</property>
+          </object>
+          <packing>
+            <property name="x">601</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkTreeView" id="treeview1">
+            <property name="width_request">312</property>
+            <property name="height_request">290</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="model">liststore_marker</property>
+            <property name="headers_clickable">False</property>
+            <property name="reorderable">True</property>
+            <property name="search_column">0</property>
+            <property name="enable_grid_lines">both</property>
+            <child>
+              <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                <property name="resizable">True</property>
+                <property name="min_width">70</property>
+                <property name="title">&#x9891;&#x7387;</property>
+                <child>
+                  <object class="GtkCellRendererText" id="cellrenderertext2">
+                    <property name="editable">True</property>
+                    <signal name="editing_started" handler="mark_table_edit_start"/>
+                    <signal name="edited" handler="mark_table_edit_finished"/>
+                  </object>
+                  <attributes>
+                    <attribute name="text">4</attribute>
+                  </attributes>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkTreeViewColumn" id="treeviewcolumn2">
+                <property name="resizable">True</property>
+                <property name="fixed_width">9</property>
+                <property name="title">&#x529F;&#x7387;</property>
+                <child>
+                  <object class="GtkCellRendererText" id="cellrenderertext1">
+                    <property name="width_chars">6</property>
+                  </object>
+                  <attributes>
+                    <attribute name="text">1</attribute>
+                  </attributes>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkTreeViewColumn" id="treeviewcolumn3">
+                <property name="title">&#x663E;&#x793A;</property>
+                <child>
+                  <object class="GtkCellRendererToggle" id="cellrenderertoggle1">
+                    <signal name="toggled" handler="marker_visable_switch"/>
+                  </object>
+                  <attributes>
+                    <attribute name="active">2</attribute>
+                  </attributes>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkTreeViewColumn" id="treeviewcolumn4">
+                <property name="title">&#x5F53;&#x524D;&#xFF1F;</property>
+                <child>
+                  <object class="GtkCellRendererToggle" id="cellrenderertoggle2">
+                    <property name="radio">True</property>
+                    <signal name="toggled" handler="current_marker_switch"/>
+                  </object>
+                  <attributes>
+                    <attribute name="active">3</attribute>
+                  </attributes>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="x">616</property>
+            <property name="y">227</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">&#x672C;&#x632F;&#xFF1A;</property>
+          </object>
+          <packing>
+            <property name="x">720</property>
+            <property name="y">135</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="entry_fs">
+            <property name="width_request">70</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="invisible_char">&#x25CF;</property>
+            <property name="text" translatable="yes">179.2</property>
+            <signal name="key_release_event" handler="entry_fs_changed_cb"/>
+          </object>
+          <packing>
+            <property name="x">770</property>
+            <property name="y">100</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="entry_flo">
+            <property name="width_request">70</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="invisible_char">&#x25CF;</property>
+            <property name="text" translatable="yes">363.4</property>
+            <signal name="key_release_event" handler="entry_flo_changed_cb"/>
+          </object>
+          <packing>
+            <property name="x">770</property>
+            <property name="y">130</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label2">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">&#x91C7;&#x6837;&#x7387;</property>
+          </object>
+          <packing>
+            <property name="x">720</property>
+            <property name="y">105</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="btn_save">
+            <property name="label" translatable="yes">&#x4FDD;&#x5B58;&#x56FE;&#x50CF;</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="btn_save_cb"/>
+          </object>
+          <packing>
+            <property name="x">777</property>
+            <property name="y">64</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
