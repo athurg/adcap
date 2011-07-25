@@ -320,11 +320,13 @@ void paint_marker(cairo_t *cr)
 		if (y>500 || x>512) {
 			continue;
 		}
-
-		cairo_move_to(cr, x, 0);
-		cairo_line_to(cr, x, 499);
-		cairo_move_to(cr, 0, y>500?500:y);
-		cairo_line_to(cr, 512, y>500?500:y);
+		cairo_new_path(cr);
+		cairo_move_to(cr, x, y);
+		cairo_line_to(cr, x-3, y-8);
+		cairo_line_to(cr, x, y-12);
+		cairo_line_to(cr, x+3, y-8);
+		cairo_line_to(cr, x, y);
+		cairo_fill(cr);
 	}
 	cairo_stroke(cr);
 }
