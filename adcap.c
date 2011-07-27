@@ -13,14 +13,28 @@
 #include <math.h>
 
 
-//buffer数据值到坐标值的转换
+//功率值到坐标值的转换
 #define TOY(val)	(-1*val)
-
+//		y = (cfg.yref+buffer[i-1]);//dBm值
+//		y *= -1*50/cfg.ydiv;//坐标值
+#define power2axis(val)	((cfg.yref + val) * -1 * 50 /cfg.ydiv)
+struct {
+	float yref;
+	float ydiv;
+	double fs;
+	double flo;
+	gboolean freq_mirror;
+	gboolean high_lo;
+}cfg={
+	0,
+	10,
+	179.2,
+	363.4,
+	0,
+	0,
+};
 float buffer[1024]={0};//帧数据缓冲区
 float yscale=1;
-float yref=0;
-float x_scale=2;
-float fs=179.2,flo=-363.4;
 
 
 int autorun=1;//更新/停止？
@@ -40,33 +54,19 @@ G_MODULE_EXPORT
 int paint (GtkWidget *widget, GdkEvent *event, gpointer data);
 
 G_MODULE_EXPORT
-void entry_fs_changed_cb(GtkWidget *w, GdkEvent *e, gpointer p)
+void update_fslo(GtkButton *btn, gpointer data)
 {
-	GtkEntry *entry = GTK_ENTRY(w);
-	GdkEventKey *evt = (GdkEventKey *)e;
-	char str[20];
+	GtkEntry *entry;
+	float val;
 
-	if ((evt->keyval &0xFF) == '\r') {
-		sscanf(gtk_entry_get_text(entry), "%f", &fs);
-		sprintf(str, "%4.2f", fs);
-		gtk_entry_set_text(entry, str);
-	}
+	entry = GTK_ENTRY(gtk_builder_get_object(builder, "entry_fs"));
+	cfg.fs = (float)g_strtod(entry->text,NULL);
+
+	entry = GTK_ENTRY(gtk_builder_get_object(builder, "entry_flo"));
+	cfg.flo = g_strtod(entry->text,NULL);
+
+	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(builder, "dlg_fslo_setting")));
 }
-G_MODULE_EXPORT
-void entry_flo_changed_cb(GtkWidget *w, GdkEvent *e, gpointer p)
-{
-	GtkEntry *entry = GTK_ENTRY(w);
-	GdkEventKey *evt = (GdkEventKey *)e;
-	char str[20];
-
-	if ((evt->keyval &0xFF) == '\r') {
-		sscanf(gtk_entry_get_text(entry), "%f", &flo);
-		sprintf(str, "%4.2f", flo);
-		gtk_entry_set_text(entry, str);
-	}
-}
-
-
 
 //Marker表编辑框更新内容回调函数
 G_MODULE_EXPORT
@@ -90,10 +90,22 @@ int mark_table_edit_finished(GtkCellRendererText *rd, gchar *path, gchar *text, 
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter, 4, value, -1);
 
 	//折算X坐标
-	value = (value+fs-abs(flo)) *1024/fs;
+	value = (value+cfg.fs-abs(cfg.flo)) *1024/cfg.fs;
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, value, -1);
 
 	update_marker = 1;
+}
+
+G_MODULE_EXPORT
+void high_lo_sw(GtkToggleButton *tg, gpointer user_data)
+{
+	cfg.high_lo = gtk_toggle_button_get_active(tg);
+}
+
+G_MODULE_EXPORT
+void freq_mirror_sw(GtkToggleButton *tg, gpointer user_data)
+{
+	cfg.freq_mirror = gtk_toggle_button_get_active(tg);
 }
 
 G_MODULE_EXPORT
@@ -135,6 +147,19 @@ void current_marker_switch(GtkCellRendererToggle *renderer, gchar *path, gpointe
 }
 
 
+void update_axis(void)
+{
+	char str[50];
+	int i;
+	GtkWidget *label;
+
+	for (i=1; i<11; i++) {
+		sprintf(str, "label_y%d", i);
+		label = GTK_WIDGET(gtk_builder_get_object(builder, str));
+		sprintf(str, "%-3.2f", i*cfg.ydiv+cfg.yref);
+		gtk_label_set_text(GTK_LABEL(label), str);
+	}
+}
 /*
  *	坐标轴伸缩
  *
@@ -143,7 +168,15 @@ void current_marker_switch(GtkCellRendererToggle *renderer, gchar *path, gpointe
 G_MODULE_EXPORT
 void adj_yref_cb(GtkAdjustment *adj, gpointer data)
 {
-	yref = gtk_adjustment_get_value(adj);
+	cfg.yref = gtk_adjustment_get_value(adj);
+	update_axis();
+	gtk_widget_queue_draw(canvas);
+}
+G_MODULE_EXPORT
+void adj_ydiv_cb(GtkAdjustment *adj, gpointer data)
+{
+	cfg.ydiv = gtk_adjustment_get_value(adj);
+	update_axis();
 	gtk_widget_queue_draw(canvas);
 }
 G_MODULE_EXPORT
@@ -156,24 +189,6 @@ void btn_maxhold_cb(GtkButton *btn, gpointer data)
 		gtk_button_set_label(btn, "最大保持");
 	}
 }
-
-G_MODULE_EXPORT
-void btn_y_zoom_in_cb(GtkButton *btn, gpointer data)
-{
-	yscale+=0.5;
-	gtk_widget_queue_draw(canvas);
-}
-
-
-G_MODULE_EXPORT
-void btn_y_zoom_out_cb(GtkButton *btn, gpointer data)
-{
-	if (yscale > 0.5) {
-		yscale-=0.5;
-		gtk_widget_queue_draw(canvas);
-	}
-}
-
 
 /***
  *	自动运行切换按钮回调函数
@@ -208,16 +223,18 @@ gboolean canvas_button_press_cb(GtkWidget *widget, GdkEventButton *event, gpoint
 	index = event->x;
 	power = buffer[index];
 
-	if (flo<0) {//高本振
-		freq = (abs(flo) - fs + event->x*fs/1024);
-	} else { //TODO:低本振
-		;
-	}
+	printf("flo=%f fs=%f freq=%f %d %d\n", cfg.flo, cfg.fs, freq, cfg.freq_mirror, cfg.high_lo);
 
 	//更新
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0,event->x, -1);//X坐标
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter, 1,power, -1);//功率
-	gtk_list_store_set(GTK_LIST_STORE(model), &iter, 4,freq, -1);//频率
+
+	//TODO
+	//	按照高低本振、频谱镜像
+	//if (cfg.high_lo) {
+	//} else {
+	//}
+	//gtk_list_store_set(GTK_LIST_STORE(model), &iter, 4,freq, -1);//频率
 
 	gtk_widget_queue_draw(canvas);
 	return TRUE;
@@ -316,15 +333,18 @@ void paint_marker(cairo_t *cr)
 			continue;
 		}
 
-		y = yref + yscale * TOY(buffer[(unsigned int)x]);
+		y = power2axis(buffer[(unsigned int)x]);
 		if (y>500 || x>512) {
 			continue;
 		}
 
-		cairo_move_to(cr, x, 0);
-		cairo_line_to(cr, x, 499);
-		cairo_move_to(cr, 0, y>500?500:y);
-		cairo_line_to(cr, 512, y>500?500:y);
+		cairo_new_path(cr);
+		cairo_move_to(cr, x, y);
+		cairo_line_to(cr, x-3, y-8);
+		cairo_line_to(cr, x, y-12);
+		cairo_line_to(cr, x+3, y-8);
+		cairo_line_to(cr, x, y);
+		cairo_fill(cr);
 	}
 	cairo_stroke(cr);
 }
@@ -333,7 +353,7 @@ void paint_marker(cairo_t *cr)
 	 根据共享数组，刷新显示
   */
 G_MODULE_EXPORT
-int paint (GtkWidget *widget, GdkEvent *event, gpointer data)
+int paint(GtkWidget *widget, GdkEvent *event, gpointer data)
 {
 	cairo_t *cr;
 	int i;
@@ -350,8 +370,11 @@ int paint (GtkWidget *widget, GdkEvent *event, gpointer data)
 	y = TOY(buffer[0])>500 ? 500 : TOY(buffer[0]);
 	cairo_move_to(cr, 0, TOY(buffer[0]));
 	for (i=1; i<512; i++) {
-		y = yref + yscale*TOY(buffer[i-1]);
-		//cairo_line_to(cr, i-1, yref+yscale*TOY(buffer[i-1]));
+		//y轴分为10个div，每个div包含50个点
+		//因此每1dBm对应的y坐标应该为50/ydiv
+		//y = (cfg.yref+buffer[i-1]);//dBm值
+		//y *= -1*50/cfg.ydiv;//坐标值
+		y = power2axis(buffer[i-1]);
 		cairo_line_to(cr, i-1, y>500?500:y);
 	}
 	cairo_stroke(cr);
@@ -425,6 +448,7 @@ gpointer refresh(gpointer data)
 int calc_pow(short *buff, unsigned int len)
 {
 	float *di,*dr; //di=>虚部，dr=>实部
+	float max,min;
 	int i;
 
 	dr = malloc(sizeof(float)*len);
@@ -441,9 +465,13 @@ int calc_pow(short *buff, unsigned int len)
 	fft(dr, di, len);
 
 	//计算对数功率
+	max = -90000;
 	for (i=0; i<len; i++) {
-		dr[i] = sqrt(dr[i]*dr[i] + di[i]*di[i])/1024;
-		dr[i] = 20*log(dr[i]*2)+13;//13是实测的修正因子
+		dr[i]  = sqrt(dr[i]*dr[i] + di[i]*di[i])/1024;
+		//FFT的功率谱分布在完全相同的原谱和镜像两部分
+		//所以总功率分布在这两部分，需要叠加
+		dr[i] *= 2;
+		dr[i] = 10*log10(dr[i]);
 	}
 
 	if (maxhold) {
@@ -483,8 +511,8 @@ void btn_save_cb(GtkButton *btn, gpointer data)
 	y = TOY(buffer[0])>500 ? 500 : TOY(buffer[0]);
 	cairo_move_to(cr, 0, TOY(buffer[0]));
 	for (i=1; i<512; i++) {
-		y = yref + yscale*TOY(buffer[i-1]);
-		//cairo_line_to(cr, i-1, yref+yscale*TOY(buffer[i-1]));
+		y = cfg.yref + yscale*TOY(buffer[i-1]);
+		//cairo_line_to(cr, i-1, cfg.yref+yscale*TOY(buffer[i-1]));
 		cairo_line_to(cr, i-1, y>500?500:y);
 	}
 	cairo_stroke(cr);
@@ -494,3 +522,4 @@ void btn_save_cb(GtkButton *btn, gpointer data)
 	cairo_destroy(cr);
 	cairo_surface_destroy(surface);
 }
+

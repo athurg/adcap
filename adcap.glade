@@ -1,13 +1,178 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy toplevel-contextual -->
+  <object class="GtkAdjustment" id="adj_ydiv">
+    <property name="upper">100</property>
+    <property name="value">10</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">10</property>
+    <signal name="value-changed" handler="adj_ydiv_cb" swapped="no"/>
+  </object>
   <object class="GtkAdjustment" id="adj_yref">
     <property name="lower">-500</property>
     <property name="upper">500</property>
     <property name="step_increment">5</property>
     <property name="page_increment">20</property>
-    <signal name="value_changed" handler="adj_yref_cb"/>
+    <signal name="value-changed" handler="adj_yref_cb" swapped="no"/>
+  </object>
+  <object class="GtkDialog" id="dlg_fslo_setting">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="type_hint">dialog</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="dialog-vbox1">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button1">
+                <property name="label" translatable="yes">确认</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <signal name="activate" handler="update_fslo" swapped="no"/>
+                <signal name="clicked" handler="update_fslo" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button2">
+                <property name="label" translatable="yes">取消</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="gtk_widget_hide" object="dlg_fslo_setting" swapped="yes"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFixed" id="fixed2">
+            <property name="width_request">0</property>
+            <property name="height_request">200</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkEntry" id="entry_fs">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="invisible_char">●</property>
+                <property name="text" translatable="yes">179.2</property>
+                <property name="invisible_char_set">True</property>
+              </object>
+              <packing>
+                <property name="x">70</property>
+                <property name="y">10</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="entry_flo">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="invisible_char">●</property>
+                <property name="text" translatable="yes">363.4</property>
+                <property name="invisible_char_set">True</property>
+              </object>
+              <packing>
+                <property name="x">70</property>
+                <property name="y">50</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label2">
+                <property name="width_request">45</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">采样率</property>
+              </object>
+              <packing>
+                <property name="x">10</property>
+                <property name="y">15</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">本振：</property>
+              </object>
+              <packing>
+                <property name="x">10</property>
+                <property name="y">55</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="checkbutton1">
+                <property name="label" translatable="yes">频谱镜像？</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="xalign">0</property>
+                <property name="draw_indicator">True</property>
+                <signal name="toggled" handler="freq_mirror_sw" swapped="no"/>
+              </object>
+              <packing>
+                <property name="x">260</property>
+                <property name="y">10</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="checkbutton2">
+                <property name="label" translatable="yes">高本振？</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="xalign">0</property>
+                <property name="draw_indicator">True</property>
+                <signal name="toggled" handler="high_lo_sw" swapped="no"/>
+              </object>
+              <packing>
+                <property name="x">260</property>
+                <property name="y">50</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="0">button1</action-widget>
+      <action-widget response="0">button2</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-missing-image</property>
   </object>
   <object class="GtkListStore" id="liststore_marker">
     <columns>
@@ -83,100 +248,79 @@
   </object>
   <object class="GtkWindow" id="window1">
     <property name="visible">True</property>
-    <signal name="delete_event" handler="gtk_main_quit"/>
+    <property name="can_focus">False</property>
+    <signal name="delete-event" handler="gtk_main_quit" swapped="no"/>
     <child>
       <object class="GtkFixed" id="fixed1">
+        <property name="width_request">1000</property>
+        <property name="height_request">700</property>
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <child>
           <object class="GtkDrawingArea" id="drawing_area">
-            <property name="width_request">600</property>
+            <property name="width_request">520</property>
             <property name="height_request">520</property>
             <property name="visible">True</property>
             <property name="app_paintable">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="events">GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK</property>
-            <signal name="button_press_event" handler="canvas_button_press_cb"/>
+            <signal name="button-press-event" handler="canvas_button_press_cb" swapped="no"/>
           </object>
           <packing>
-            <property name="y">38</property>
+            <property name="x">80</property>
+            <property name="y">40</property>
           </packing>
         </child>
         <child>
           <object class="GtkButton" id="btn_autorun">
-            <property name="label" translatable="yes">&#x542F;&#x52A8;/&#x505C;&#x6B62;</property>
+            <property name="label" translatable="yes">启动/停止</property>
+            <property name="width_request">84</property>
+            <property name="height_request">30</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <signal name="clicked" handler="btn_autorun_cb"/>
+            <property name="use_action_appearance">False</property>
+            <signal name="clicked" handler="btn_autorun_cb" swapped="no"/>
           </object>
           <packing>
-            <property name="x">776</property>
+            <property name="x">268</property>
             <property name="y">1</property>
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="btn_y_zoom_in">
-            <property name="label" translatable="yes">+</property>
-            <property name="height_request">43</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <signal name="clicked" handler="btn_y_zoom_in_cb"/>
-          </object>
-          <packing>
-            <property name="x">604</property>
-            <property name="y">83</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="btn_y_zoom_out">
-            <property name="label" translatable="yes">-</property>
-            <property name="height_request">38</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <signal name="clicked" handler="btn_y_zoom_out_cb"/>
-          </object>
-          <packing>
-            <property name="x">604</property>
-            <property name="y">169</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkButton" id="btn_maxhold">
-            <property name="label" translatable="yes">&#x6700;&#x5927;&#x4FDD;&#x6301;</property>
-            <property name="width_request">64</property>
+            <property name="label" translatable="yes">最大保持</property>
+            <property name="width_request">76</property>
             <property name="height_request">31</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <signal name="clicked" handler="btn_maxhold_cb"/>
+            <property name="use_action_appearance">False</property>
+            <signal name="clicked" handler="btn_maxhold_cb" swapped="no"/>
           </object>
           <packing>
-            <property name="x">777</property>
-            <property name="y">33</property>
+            <property name="x">355</property>
           </packing>
         </child>
         <child>
           <object class="GtkSpinButton" id="spinbtn_yref">
-            <property name="width_request">57</property>
-            <property name="height_request">29</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="max_length">3</property>
-            <property name="invisible_char">&#x25CF;</property>
+            <property name="invisible_char">●</property>
             <property name="adjustment">adj_yref</property>
             <property name="wrap">True</property>
           </object>
           <packing>
-            <property name="x">601</property>
+            <property name="x">15</property>
+            <property name="y">39</property>
           </packing>
         </child>
         <child>
           <object class="GtkTreeView" id="treeview1">
-            <property name="width_request">312</property>
-            <property name="height_request">290</property>
+            <property name="width_request">223</property>
+            <property name="height_request">247</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="model">liststore_marker</property>
@@ -184,16 +328,19 @@
             <property name="reorderable">True</property>
             <property name="search_column">0</property>
             <property name="enable_grid_lines">both</property>
+            <child internal-child="selection">
+              <object class="GtkTreeSelection" id="treeview-selection1"/>
+            </child>
             <child>
               <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                 <property name="resizable">True</property>
                 <property name="min_width">70</property>
-                <property name="title">&#x9891;&#x7387;</property>
+                <property name="title">频率</property>
                 <child>
                   <object class="GtkCellRendererText" id="cellrenderertext2">
                     <property name="editable">True</property>
-                    <signal name="editing_started" handler="mark_table_edit_start"/>
-                    <signal name="edited" handler="mark_table_edit_finished"/>
+                    <signal name="editing-started" handler="mark_table_edit_start" swapped="no"/>
+                    <signal name="edited" handler="mark_table_edit_finished" swapped="no"/>
                   </object>
                   <attributes>
                     <attribute name="text">4</attribute>
@@ -205,7 +352,7 @@
               <object class="GtkTreeViewColumn" id="treeviewcolumn2">
                 <property name="resizable">True</property>
                 <property name="fixed_width">9</property>
-                <property name="title">&#x529F;&#x7387;</property>
+                <property name="title">功率</property>
                 <child>
                   <object class="GtkCellRendererText" id="cellrenderertext1">
                     <property name="width_chars">6</property>
@@ -218,10 +365,10 @@
             </child>
             <child>
               <object class="GtkTreeViewColumn" id="treeviewcolumn3">
-                <property name="title">&#x663E;&#x793A;</property>
+                <property name="title">显示</property>
                 <child>
                   <object class="GtkCellRendererToggle" id="cellrenderertoggle1">
-                    <signal name="toggled" handler="marker_visable_switch"/>
+                    <signal name="toggled" handler="marker_visable_switch" swapped="no"/>
                   </object>
                   <attributes>
                     <attribute name="active">2</attribute>
@@ -231,11 +378,11 @@
             </child>
             <child>
               <object class="GtkTreeViewColumn" id="treeviewcolumn4">
-                <property name="title">&#x5F53;&#x524D;&#xFF1F;</property>
+                <property name="title">当前？</property>
                 <child>
                   <object class="GtkCellRendererToggle" id="cellrenderertoggle2">
                     <property name="radio">True</property>
-                    <signal name="toggled" handler="current_marker_switch"/>
+                    <signal name="toggled" handler="current_marker_switch" swapped="no"/>
                   </object>
                   <attributes>
                     <attribute name="active">3</attribute>
@@ -245,70 +392,291 @@
             </child>
           </object>
           <packing>
-            <property name="x">616</property>
-            <property name="y">227</property>
+            <property name="x">690</property>
+            <property name="y">308</property>
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="label1">
+          <object class="GtkLabel" id="label_y1">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&#x672C;&#x632F;&#xFF1A;</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">-10.00</property>
+            <attributes>
+              <attribute name="font-desc" value="Sans 10"/>
+            </attributes>
           </object>
           <packing>
-            <property name="x">720</property>
-            <property name="y">135</property>
+            <property name="x">20</property>
+            <property name="y">90</property>
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="entry_fs">
-            <property name="width_request">70</property>
+          <object class="GtkLabel" id="label_y2">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">-20.00</property>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">140</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_y3">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">-30.00</property>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">190</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_y4">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">-40.00</property>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">240</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_y5">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">-50.00</property>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">290</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_y6">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">-60.00</property>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">340</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_y7">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">-70.00</property>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">390</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_y8">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">-80.00</property>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">440</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_y9">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">-90.00</property>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">490</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_y10">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">-100.00</property>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">540</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="spinbtn_yref1">
+            <property name="width_request">58</property>
+            <property name="height_request">30</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="invisible_char">&#x25CF;</property>
-            <property name="text" translatable="yes">179.2</property>
-            <signal name="key_release_event" handler="entry_fs_changed_cb"/>
+            <property name="max_length">3</property>
+            <property name="invisible_char">●</property>
+            <property name="invisible_char_set">True</property>
+            <property name="adjustment">adj_ydiv</property>
+            <property name="wrap">True</property>
           </object>
           <packing>
-            <property name="x">770</property>
-            <property name="y">100</property>
+            <property name="x">772</property>
+            <property name="y">165</property>
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="entry_flo">
-            <property name="width_request">70</property>
+          <object class="GtkLabel" id="label3">
+            <property name="width_request">32</property>
+            <property name="height_request">20</property>
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="invisible_char">&#x25CF;</property>
-            <property name="text" translatable="yes">363.4</property>
-            <signal name="key_release_event" handler="entry_flo_changed_cb"/>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">ydiv:</property>
           </object>
           <packing>
-            <property name="x">770</property>
-            <property name="y">130</property>
+            <property name="x">724</property>
+            <property name="y">170</property>
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="label2">
+          <object class="GtkMenuBar" id="menubar1">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&#x91C7;&#x6837;&#x7387;</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkMenuItem" id="menuitem1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">文件(_F)</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem1">
+                        <property name="label">gtk-new</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem2">
+                        <property name="label">gtk-open</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem3">
+                        <property name="label">gtk-save</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="btn_save_cb" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem4">
+                        <property name="label">gtk-save-as</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="separatormenuitem1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem5">
+                        <property name="label">gtk-quit</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="menuitem2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">信号(_S)</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu2">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem6">
+                        <property name="label" translatable="yes">采样率和本振</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="image">image1</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="gtk_dialog_run" object="dlg_fslo_setting" swapped="yes"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="menuitem3">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">视图(_V)</property>
+                <property name="use_underline">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="menuitem4">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">帮助(_H)</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu3">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem10">
+                        <property name="label">gtk-about</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
-          <packing>
-            <property name="x">720</property>
-            <property name="y">105</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="btn_save">
-            <property name="label" translatable="yes">&#x4FDD;&#x5B58;&#x56FE;&#x50CF;</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <signal name="clicked" handler="btn_save_cb"/>
-          </object>
-          <packing>
-            <property name="x">777</property>
-            <property name="y">64</property>
-          </packing>
         </child>
       </object>
     </child>
