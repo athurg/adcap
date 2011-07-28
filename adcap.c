@@ -223,8 +223,6 @@ gboolean canvas_button_press_cb(GtkWidget *widget, GdkEventButton *event, gpoint
 	index = event->x;
 	power = buffer[index];
 
-	printf("flo=%f fs=%f freq=%f %d %d\n", cfg.flo, cfg.fs, freq, cfg.freq_mirror, cfg.high_lo);
-
 	//更新
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0,event->x, -1);//X坐标
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter, 1,power, -1);//功率
@@ -309,6 +307,7 @@ void paint_marker(cairo_t *cr)
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	int total_cnt, i;
+	char str[10];
 	double y;
 
 
@@ -334,17 +333,19 @@ void paint_marker(cairo_t *cr)
 		}
 
 		y = power2axis(buffer[(unsigned int)x]);
-		if (y>500 || x>512) {
-			continue;
-		}
+		if (x>512)	x=512;
+		if (x<0)	x=0;
+		if (y>500)	y=500;
+		if (y<12)	y=12;
 
-		cairo_new_path(cr);
 		cairo_move_to(cr, x, y);
-		cairo_line_to(cr, x-3, y-8);
-		cairo_line_to(cr, x, y-12);
-		cairo_line_to(cr, x+3, y-8);
+		cairo_line_to(cr, x-8, y-10);
+		cairo_line_to(cr, x, y-20);
+		cairo_line_to(cr, x+8, y-10);
 		cairo_line_to(cr, x, y);
-		cairo_fill(cr);
+		cairo_move_to(cr, x-3, y-6);
+		sprintf(str, "%d", i);
+		cairo_show_text(cr, str);
 	}
 	cairo_stroke(cr);
 }
@@ -362,7 +363,6 @@ int paint(GtkWidget *widget, GdkEvent *event, gpointer data)
 	cr = gdk_cairo_create (widget->window);
 
 	paint_bg(cr);
-	paint_marker(cr);
 
 	//画图（蓝色）
 	cairo_set_line_width(cr, 1);
@@ -379,6 +379,7 @@ int paint(GtkWidget *widget, GdkEvent *event, gpointer data)
 	}
 	cairo_stroke(cr);
 
+	paint_marker(cr);
 	cairo_destroy(cr);
 	return TRUE;
 }
